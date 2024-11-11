@@ -1,9 +1,20 @@
 part of 'home_bloc.dart';
 
-abstract class HomeState extends Equatable {
-  const HomeState();  
+class HomeState {
+  ConditionStateEnum? conditionStateEnum;
+  String? errorMessage;
 
-  @override
-  List<Object> get props => [];
+  HomeState({this.conditionStateEnum, this.errorMessage});
+
+  HomeState copyWith(
+          {ConditionStateEnum? conditionStateEnum, String? errorMessage}) =>
+      HomeState(
+        conditionStateEnum: conditionStateEnum ?? this.conditionStateEnum,
+        errorMessage: errorMessage ?? this.errorMessage,
+      );
+
+  List<Object?> get props => [
+        conditionStateEnum,
+        errorMessage,
+      ];
 }
-class HomeInitial extends HomeState {}

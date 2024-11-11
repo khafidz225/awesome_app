@@ -6,3 +6,10 @@ abstract class HomeEvent extends Equatable {
   @override
   List<Object> get props => [];
 }
+
+class HomeGetPhotosEvent extends HomeEvent {
+  BuildContext context;
+  HomeGetPhotosEvent({required this.context});
+  @override
+  List<Object> get props => [context];
+}

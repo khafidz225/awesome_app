@@ -1,6 +1,8 @@
 import 'package:awesome_app/core/config/api_config.dart';
 import 'package:dio/dio.dart';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AppInterceptor extends Interceptor {
   @override
@@ -8,6 +10,7 @@ class AppInterceptor extends Interceptor {
       RequestOptions options, RequestInterceptorHandler handler) async {
     options.headers['Content-Type'] = 'application/json';
     options.headers['Accept'] = '*/*';
+    options.headers['Authorization'] = dotenv.env['APIKEY'];
     options.baseUrl = ApiConfig.baseUrl;
 
     super.onRequest(options, handler);
