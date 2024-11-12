@@ -1,6 +1,7 @@
 enum ConditionStateEnum {
   initial,
   loading,
+  loadingMore,
   loadingCamera,
   loadingLocation,
   loadingButton,

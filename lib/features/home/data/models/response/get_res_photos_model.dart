@@ -31,6 +31,19 @@ class GetResPhotosModel {
     required this.totalResults,
   });
 
+  GetResPhotosModel copyWith({
+    int? page,
+    int? perPage,
+    List<Photo>? photos,
+    int? totalResults,
+  }) =>
+      GetResPhotosModel(
+        page: page ?? this.page,
+        perPage: perPage ?? this.perPage,
+        photos: photos ?? this.photos,
+        totalResults: totalResults ?? this.totalResults,
+      );
+
   factory GetResPhotosModel.fromJson(Map<String, dynamic> json) =>
       _$GetResPhotosModelFromJson(json);
 
@@ -76,6 +89,33 @@ class Photo {
     required this.alt,
   });
 
+  Photo copyWith({
+    int? id,
+    int? width,
+    int? height,
+    String? url,
+    String? photographer,
+    String? photographerUrl,
+    int? photographerId,
+    String? avgColor,
+    Src? src,
+    bool? liked,
+    String? alt,
+  }) =>
+      Photo(
+        id: id ?? this.id,
+        width: width ?? this.width,
+        height: height ?? this.height,
+        url: url ?? this.url,
+        photographer: photographer ?? this.photographer,
+        photographerUrl: photographerUrl ?? this.photographerUrl,
+        photographerId: photographerId ?? this.photographerId,
+        avgColor: avgColor ?? this.avgColor,
+        src: src ?? this.src,
+        liked: liked ?? this.liked,
+        alt: alt ?? this.alt,
+      );
+
   factory Photo.fromJson(Map<String, dynamic> json) => _$PhotoFromJson(json);
 
   Map<String, dynamic> toJson() => _$PhotoToJson(this);
@@ -110,6 +150,27 @@ class Src {
     required this.landscape,
     required this.tiny,
   });
+
+  Src copyWith({
+    String? original,
+    String? large2X,
+    String? large,
+    String? medium,
+    String? small,
+    String? portrait,
+    String? landscape,
+    String? tiny,
+  }) =>
+      Src(
+        original: original ?? this.original,
+        large2X: large2X ?? this.large2X,
+        large: large ?? this.large,
+        medium: medium ?? this.medium,
+        small: small ?? this.small,
+        portrait: portrait ?? this.portrait,
+        landscape: landscape ?? this.landscape,
+        tiny: tiny ?? this.tiny,
+      );
 
   factory Src.fromJson(Map<String, dynamic> json) => _$SrcFromJson(json);
 

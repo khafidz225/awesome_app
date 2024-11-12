@@ -15,12 +15,12 @@ class HomeRemoteDatasourceImpl extends HomeRemoteDatasource {
   Future<GetResPhotosModel> getPhotos(
       {required int perPage, required int page}) async {
     try {
-      final response = await locator<Dio>().get(ApiConfig.searchPhoto,
-          queryParameters: {
-            'query': 'nature',
-            'per_page': perPage,
-            'page': page
-          });
+      final response =
+          await locator<Dio>().get(ApiConfig.curatedPhoto, queryParameters: {
+        // 'query': 'nature',
+        'per_page': perPage,
+        'page': page
+      });
       if (response.statusCode != 200) {
         return Future.error(GeneralException(message: response.data));
       }

@@ -1,65 +1,116 @@
 import 'package:awesome_app/core/di/depedency_injection.dart';
+import 'package:awesome_app/core/enum/condition_state_enum.dart';
+import 'package:awesome_app/core/router/app_pages.dart';
+import 'package:awesome_app/core/service/image_cache_service.dart';
 import 'package:awesome_app/features/home/presentation/bloc/home_bloc.dart';
+import 'package:card_loading/card_loading.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../data/models/response/get_res_photos_model.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.sizeOf(context);
+    final scrollController = ScrollController();
+
+    scrollController.addListener(() {
+      if (scrollController.position.pixels ==
+          scrollController.position.maxScrollExtent) {
+        // Mengirimkan event LoadMoreData ke BLoC
+        locator<HomeBloc>().add(HomeLoadMoreEvent(context: context));
+      }
+    });
     return Scaffold(
-      body: NestedScrollView(
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return <Widget>[
-            SliverAppBar(
-              expandedHeight: 200.0,
-              floating: false,
-              pinned: true,
-              flexibleSpace: FlexibleSpaceBar(
-                  centerTitle: true,
-                  title: const Text("Collapsing Toolbar",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16.0,
+      body: BlocBuilder<HomeBloc, HomeState>(
+        builder: (context, state) {
+          return NestedScrollView(
+            controller: scrollController,
+            headerSliverBuilder:
+                (BuildContext context, bool innerBoxIsScrolled) {
+              return <Widget>[
+                SliverAppBar(
+                  expandedHeight: 150.0,
+                  floating: false,
+                  pinned: true,
+                  backgroundColor: Colors.blue,
+                  flexibleSpace: FlexibleSpaceBar(
+                      centerTitle: true,
+                      collapseMode: CollapseMode.parallax,
+                      title: const Text("Galery",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16.0,
+                          )),
+                      background: Image.network(
+                        "https://images.pexels.com/photos/396547/pexels-photo-396547.jpeg?auto=compress&cs=tinysrgb&h=350",
+                        fit: BoxFit.cover,
                       )),
-                  background: Image.network(
-                    "https://images.pexels.com/photos/396547/pexels-photo-396547.jpeg?auto=compress&cs=tinysrgb&h=350",
-                    fit: BoxFit.cover,
-                  )),
+                ),
+              ];
+            },
+            body: RefreshIndicator(
+              onRefresh: () async {
+                locator<HomeBloc>()
+                    .add(HomeGetPhotosEvent(context: context, isRender: true));
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Stack(
+                  children: [
+                    GridView.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithMaxCrossAxisExtent(
+                        maxCrossAxisExtent: 150,
+                        mainAxisSpacing: 8,
+                        crossAxisSpacing: 8,
+                        childAspectRatio: 0.7,
+                      ),
+                      itemCount: state.valueListPhoto?.photos.length,
+                      itemBuilder: (context, index) {
+                        return InkWell(
+                          onTap: () {
+                            locator<HomeBloc>().add(HomeGetPhotoDetailEvent(
+                                context: context,
+                                valuePhotoDetail:
+                                    state.valueListPhoto!.photos[index]));
+                          },
+                          child: state.conditionStateEnum ==
+                                  ConditionStateEnum.loading
+                              ? CardLoading(
+                                  height: 200,
+                                  borderRadius: BorderRadius.circular(16),
+                                )
+                              : ClipRRect(
+                                  borderRadius: BorderRadius.circular(16.0),
+                                  child: Hero(
+                                    tag: state.valueListPhoto!.photos[index].id,
+                                    child: ImageCacheService.getNetworkImage(
+                                        state.valueListPhoto!.photos[index].src
+                                            .portrait),
+                                  )),
+                        );
+                      },
+                    ),
+                    if (state.conditionStateEnum ==
+                        ConditionStateEnum.loadingMore)
+                      Positioned(
+                        bottom: 16,
+                        left: size.width / 2 - 30,
+                        child: const CircularProgressIndicator(),
+                      ),
+                  ],
+                ),
+              ),
             ),
-          ];
+          );
         },
-        body: const Center(
-          child: Text("Sample Text"),
-        ),
       ),
     );
-
-    // Scaffold(
-
-    //   body: Center(
-    //     child: Column(
-    //       mainAxisAlignment: MainAxisAlignment.center,
-    //       children: <Widget>[
-    //         const Text(
-    //           'You have pushed the button this many times:',
-    //         ),
-    //         Text(
-    //           'test',
-    //           style: Theme.of(context).textTheme.headlineMedium,
-    //         ),
-    //       ],
-    //     ),
-    //   ),
-    //   floatingActionButton: FloatingActionButton(
-    //     onPressed: () {
-    //       locator<HomeBloc>().add(HomeGetPhotosEvent(context: context));
-    //       // print('API KEY : ${dotenv.env['APIKEY']}');
-    //     },
-    //     tooltip: 'Increment',
-    //     child: const Icon(Icons.add),
-    //   ),
-    // );
   }
 }
