@@ -1,15 +1,11 @@
 import 'package:awesome_app/core/di/depedency_injection.dart';
 import 'package:awesome_app/core/enum/condition_state_enum.dart';
-import 'package:awesome_app/core/router/app_pages.dart';
+
 import 'package:awesome_app/core/service/image_cache_service.dart';
 import 'package:awesome_app/features/home/presentation/bloc/home_bloc.dart';
 import 'package:card_loading/card_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:go_router/go_router.dart';
-
-import '../../data/models/response/get_res_photos_model.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -22,7 +18,6 @@ class HomePage extends StatelessWidget {
     scrollController.addListener(() {
       if (scrollController.position.pixels ==
           scrollController.position.maxScrollExtent) {
-        // Mengirimkan event LoadMoreData ke BLoC
         locator<HomeBloc>().add(HomeLoadMoreEvent(context: context));
       }
     });
